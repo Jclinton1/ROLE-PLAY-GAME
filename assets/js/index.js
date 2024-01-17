@@ -34,6 +34,23 @@ const weapons = [
     power: 100,
   },
 ];
+const monsters = [
+  {
+    name: "slime",
+    level: 2,
+    health: 15
+  },
+  {
+    name: "fanged beast",
+    level: 8,
+    health: 60
+  },
+  {
+    name: "dragon",
+    level: 20,
+    health: 300
+  }
+];
 const locations = [
   {
     name: "town square",
@@ -51,6 +68,12 @@ const locations = [
     "button functions": [buyHealth, buyWeapon, goTown],
     text: "You enter the store.",
   },
+  {
+    name: "fight",
+    "button text": ["Attack", "Dodge", "Run"],
+    "button functions": [attack, dodge, goTown],
+    text: "You are fighting a monster."
+  }
 ];
 
 // initialize buttons
@@ -66,23 +89,23 @@ function update() {
   button2.onclick = locations["button functions"][1];
   button3.onclick = locations["button functions"][2];
   text.innerText = locations.text;
-}
+};
 
 function goTown() {
   update(locations[0]);
-}
+};
 
 function goStore() {
   update(locations[1]);
-}
+};
 
 function goCave() {
   console.log("Going to cave.");
-}
+};
 
 function fightDragon() {
   console.log("Fighting dragon.");
-}
+};
 
 function buyHealth() {
   if (gold >= 10) {
@@ -93,7 +116,7 @@ function buyHealth() {
   } else {
     text.innerText = "You do not have enough gold to buy health.";
   }
-}
+};
 
 function buyWeapon() {
   if (currentWeapon < weapons.length - 1) {
@@ -113,12 +136,65 @@ function buyWeapon() {
     button2.innerText = "Sell weapon for 15 gold";
     button2.onclick = sellWeapon;
   }
-}
+};
 
 function sellWeapon() {
+  if (inventory.length > 1) {
+    gold += 15;
+    goldText.innerText = gold
+    let currentWeapon = inventory.shift();
+    text.innerText = "You sold a " + currentWeapon + ".";
+    text.innerText += " In your inventory you have: " + inventory;
+  } else {
+    text.innerText = "Don't sell your only weapon!";
+  }
+};
 
+function fightSlime() {
+ fighting = 0;
+ goFight();
 }
 
-function fightSlime() {}
+function fightBeast() {
+  fighting = 1;
+  goFight();
+}
 
-function fightBeast() {}
+function fightDragon() {
+  fighting = 2;
+   goFight();
+}
+
+function goFight() {
+  update(locations[3]);
+  monsterHealth = monsters[fighting].health;
+  monsterStats.style.display = "block";
+  monsterName.innerText = monsters[fighting].name;
+  monsterHealthText.innerText = monsterHealth;
+}
+
+function attack() {
+  text.innerText = "The " + monsters[fighting].name + "attacks.";
+  text.innerText += " You attack it with your " + weapons[currentWeapon].name;
+  health -= monsters[fighting].level;
+  monsterHealth -= weapons[currentWeapon].power + Math.floor(Math.random() * xp) + 1;
+  healthText.innerText = health;
+  monsterHealthText.innerText = monsterHealth;
+  if (health <= 0) {
+    lose()
+  } else if (monsterHealth <= 0) {
+    defeatMonster()
+  }
+};
+
+function dodge() {
+
+};
+
+function defeatMonster() {
+
+};
+
+function lose() {
+
+};
